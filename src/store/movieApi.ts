@@ -19,6 +19,10 @@ interface SearchParams extends PaginationParams {
   query: string;
 }
 
+interface DiscoverParams extends PaginationParams {
+  genreId?: number;
+}
+
 export const movieApi = createApi({
   reducerPath: 'movieApi',
   baseQuery: fetchBaseQuery({ 
@@ -55,12 +59,13 @@ export const movieApi = createApi({
       }),
       providesTags: (_result, _error, id) => [{ type: 'Movies', id }]
     }),
-    getPopularMovies: builder.query<MovieResponse, PaginationParams>({
-      query: ({ page }) => ({
+    getPopularMovies: builder.query<MovieResponse, DiscoverParams>({
+      query: ({ page, genreId }) => ({
         url: '/discover/movie',
         params: {
           api_key: TMDB_API_KEY,
           page,
+          with_genres: genreId,
           language: 'pl-PL',
           sort_by: 'popularity.desc',
           include_adult: false,

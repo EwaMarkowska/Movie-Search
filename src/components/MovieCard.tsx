@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Movie } from '../types/movie';
 import { useFavorites } from '../hooks/useFavorites';
 import toast from 'react-hot-toast';
@@ -10,15 +10,21 @@ interface MovieCardProps {
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick }) => {
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
+  const [isCurrentlyFavorite, setIsCurrentlyFavorite] = useState(isFavorite(movie.id));
+
+  useEffect(() => {
+    setIsCurrentlyFavorite(isFavorite(movie.id));
+  }, [isFavorite, movie.id]);
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const isFav = isFavorite(movie.id);
-    if (isFav) {
+    if (isCurrentlyFavorite) {
       removeFavorite(movie.id);
+      setIsCurrentlyFavorite(false);
       toast.success(`Film "${movie.title}" został usunięty z ulubionych`);
     } else {
       addFavorite(movie);
+      setIsCurrentlyFavorite(true);
       toast.success(`Film "${movie.title}" został dodany do ulubionych`);
     }
   };
@@ -33,7 +39,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick }) => {
         className="absolute top-2 right-2 z-10 cursor-pointer p-2"
         onClick={handleFavoriteClick}
       >
-        {isFavorite(movie.id) ? (
+        {isCurrentlyFavorite ? (
           <svg className="w-6 h-6 text-red-500 fill-current" viewBox="0 0 24 24">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
