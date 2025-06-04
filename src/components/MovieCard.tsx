@@ -1,7 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Movie } from '../types/movie';
 
-const MovieCard = ({ movie, onClick }) => {
+interface MovieCardProps {
+  movie: Movie;
+  onClick: (id: number) => void;
+}
+
+const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick }) => {
   return (
     <div
       className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 cursor-pointer"
@@ -22,17 +27,6 @@ const MovieCard = ({ movie, onClick }) => {
       </div>
     </div>
   );
-};
-
-MovieCard.propTypes = {
-  movie: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-    poster_path: PropTypes.string,
-    release_date: PropTypes.string,
-    vote_average: PropTypes.number,
-  }).isRequired,
-  onClick: PropTypes.func.isRequired,
 };
 
 export default MovieCard; 

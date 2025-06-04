@@ -1,18 +1,21 @@
 import React, { useState, useCallback } from 'react';
-import PropTypes from 'prop-types';
 import debounce from 'lodash/debounce';
 
-const SearchBar = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+interface SearchBarProps {
+  onSearch: (term: string) => void;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const debouncedSearch = useCallback(
-    debounce((term) => {
+    debounce((term: string) => {
       onSearch(term);
     }, 500),
     [onSearch]
   );
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
     debouncedSearch(value);
@@ -29,10 +32,6 @@ const SearchBar = ({ onSearch }) => {
       />
     </div>
   );
-};
-
-SearchBar.propTypes = {
-  onSearch: PropTypes.func.isRequired,
 };
 
 export default SearchBar; 

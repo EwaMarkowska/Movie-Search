@@ -4,8 +4,8 @@ import { useGetPopularMoviesQuery, useSearchMoviesQuery } from '../store/movieAp
 import MovieCard from '../components/MovieCard';
 import SearchBar from '../components/SearchBar';
 
-const HomePage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+const HomePage: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const navigate = useNavigate();
 
   const { data: popularMovies, isLoading: isLoadingPopular } = useGetPopularMoviesQuery();
@@ -13,11 +13,11 @@ const HomePage = () => {
     skip: !searchTerm,
   });
 
-  const handleSearch = (term) => {
+  const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
 
-  const handleMovieClick = (movieId) => {
+  const handleMovieClick = (movieId: number) => {
     navigate(`/movie/${movieId}`);
   };
 
