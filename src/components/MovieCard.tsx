@@ -27,6 +27,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick }) => {
     <div
       className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 cursor-pointer relative"
       onClick={() => onClick(movie.id)}
+      data-testid="movie-card"
     >
       <div
         className="absolute top-2 right-2 z-10 cursor-pointer p-2"
@@ -43,7 +44,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick }) => {
         )}
       </div>
       <img
-        src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        src={movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'https://via.placeholder.com/500x750'}
         alt={movie.title}
         className="w-full h-96 object-cover"
       />
