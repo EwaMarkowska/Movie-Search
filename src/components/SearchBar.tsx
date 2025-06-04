@@ -6,7 +6,7 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
@@ -17,20 +17,33 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    debouncedSearch(value);
+    const term = e.target.value;
+    setSearchTerm(term);
+    debouncedSearch(term);
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mb-8">
+    <div className="relative">
       <input
         type="text"
         value={searchTerm}
         onChange={handleChange}
-        placeholder="Search for movies..."
-        className="w-full px-4 py-2 text-gray-700 bg-gray-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-500"
+        placeholder="Wyszukaj film..."
+        className="w-full px-4 py-2 text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       />
+      <svg
+        className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
     </div>
   );
 };
