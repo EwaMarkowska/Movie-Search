@@ -4,24 +4,78 @@ import { Movie } from '../types/movie';
 const TMDB_API_KEY = 'fdb766ad89c2e1a549cc29d67273229f';
 const BASE_URL = 'https://api.themoviedb.org/3';
 
-interface MovieResponse {
+export interface MovieResponse {
   results: Movie[];
   total_pages: number;
   total_results: number;
+  page: number;
+}
+
+interface PaginationParams {
+  page: number;
+}
+
+interface SearchParams extends PaginationParams {
+  query: string;
 }
 
 export const movieApi = createApi({
   reducerPath: 'movieApi',
-  baseQuery: fetchBaseQuery({ baseUrl: BASE_URL }),
+  baseQuery: fetchBaseQuery({ 
+    baseUrl: BASE_URL
+  }),
+  tagTypes: ['Movies'],
   endpoints: (builder) => ({
-    searchMovies: builder.query<MovieResponse, string>({
-      query: (searchTerm) => `/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(searchTerm)}&language=pl-PL`,
+    searchMovies: builder.query<MovieResponse, SearchParams>({
+      query: ({ query, page }) => ({
+        url: '/search/movie',
+        params: {
+          api_key: TMDB_API_KEY,
+          query,
+          page,
+          language: 'pl-PL',
+          include_adult: false
+        }
+      }),
+      providesTags: (result) => 
+        result
+          ? [
+              ...result.results.map(({ id }) => ({ type: 'Movies' as const, id })),
+              { type: 'Movies', id: 'SEARCH' }
+            ]
+          : [{ type: 'Movies', id: 'SEARCH' }]
     }),
     getMovieDetails: builder.query<Movie, number>({
-      query: (movieId) => `/movie/${movieId}?api_key=${TMDB_API_KEY}&language=pl-PL`,
+      query: (movieId) => ({
+        url: `/movie/${movieId}`,
+        params: {
+          api_key: TMDB_API_KEY,
+          language: 'pl-PL'
+        }
+      }),
+      providesTags: (_result, _error, id) => [{ type: 'Movies', id }]
     }),
-    getPopularMovies: builder.query<MovieResponse, void>({
-      query: () => `/movie/popular?api_key=${TMDB_API_KEY}&language=pl-PL`,
+    getPopularMovies: builder.query<MovieResponse, PaginationParams>({
+      query: ({ page }) => ({
+        url: '/discover/movie',
+        params: {
+          api_key: TMDB_API_KEY,
+          page,
+          language: 'pl-PL',
+          sort_by: 'popularity.desc',
+          include_adult: false,
+          include_video: false
+        }
+      }),
+      providesTags: (result) => 
+        result
+          ? [
+              ...result.results.map(({ id }) => ({ type: 'Movies' as const, id })),
+              { type: 'Movies', id: 'POPULAR' }
+            ]
+          : [{ type: 'Movies', id: 'POPULAR' }],
+      // Cache każdej strony przez 5 minut
+      keepUnusedDataFor: 300,
     }),
   }),
 });
