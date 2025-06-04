@@ -1,12 +1,22 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useGetMovieDetailsQuery } from '../store/movieApi';
 import { Genre } from '../types/movie';
+import { useRouteParams, movieIdValidator } from '../hooks/useRouteParams';
+
+interface MovieDetailsParams {
+  [key: string]: string;
+  id: string;
+}
 
 const MovieDetailsPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useRouteParams<MovieDetailsParams>({ id: '' }, movieIdValidator);
   const navigate = useNavigate();
-  const { data: movie, isLoading } = useGetMovieDetailsQuery(id ?? '');
+  const { data: movie, isLoading, error } = useGetMovieDetailsQuery(id);
+
+  if (error) {
+    throw error;
+  }
 
   if (isLoading) {
     return (
@@ -17,11 +27,7 @@ const MovieDetailsPage: React.FC = () => {
   }
 
   if (!movie) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-red-500">Movie not found</div>
-      </div>
-    );
+    throw new Response('Movie not found', { status: 404 });
   }
 
   return (
